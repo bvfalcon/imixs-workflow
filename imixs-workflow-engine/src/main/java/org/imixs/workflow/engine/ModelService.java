@@ -36,17 +36,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
+
 import org.imixs.workflow.FileData;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.Model;
@@ -85,9 +89,11 @@ import org.imixs.workflow.exceptions.ModelException;
         "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
 @Singleton
 @LocalBean
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class ModelService implements ModelManager {
 
-    private Map<String, Model> modelStore = null;
+    private ConcurrentHashMap<String, Model> modelStore = null;
+    
     private static Logger logger = Logger.getLogger(ModelService.class.getName());
     @Inject
     private DocumentService documentService;
@@ -237,8 +243,10 @@ public class ModelService implements ModelManager {
                 versions = findVersionsByGroup(workflowGroup);
                 if (!versions.isEmpty()) {
                     String newVersion = versions.get(0);
-                    logger.warning("Deprecated model version: '" + modelVersion + "' -> migrating to '" + newVersion
+                    if (!modelVersion.isEmpty()) {
+                        logger.warning("Deprecated model version: '" + modelVersion + "' -> migrating to '" + newVersion
                             + "',  $workflowgroup: '" + workflowGroup + "', $uniqueid: " + workitem.getUniqueID());
+                    }
                     workitem.replaceItemValue(WorkflowKernel.MODELVERSION, newVersion);
                     model = getModel(newVersion);
                 }
@@ -523,7 +531,7 @@ public class ModelService implements ModelManager {
     private Map<String, Model> getModelStore() {
         if (modelStore == null) {
             // create store (sorted map)
-            modelStore = new TreeMap<String, Model>();
+            modelStore = new ConcurrentHashMap<String, Model>();
             init();
         }
         return modelStore;
