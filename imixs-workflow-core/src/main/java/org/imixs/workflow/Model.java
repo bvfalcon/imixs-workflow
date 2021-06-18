@@ -120,4 +120,5 @@ public interface Model {
      */
     public List<ItemCollection> findTasksByGroup(String group);
 
+    public String getLane(int taskID) throws ModelException;
 }
