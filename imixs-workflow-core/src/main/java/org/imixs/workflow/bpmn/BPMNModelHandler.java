@@ -81,6 +81,7 @@ public class BPMNModelHandler extends DefaultHandler {
     private boolean bBoundaryEvent = false;
     private boolean bTimerEventDefinition = false;
     private boolean btimeDuration = false;
+    private boolean isFlowNodeRef = false;
 
     private boolean bconditionExpression = false;
 
@@ -97,6 +98,7 @@ public class BPMNModelHandler extends DefaultHandler {
     private String currentSignalRefID = null;
     private String currentLinkName = null;
     private ItemCollection currentBoundaryEvent = null;
+    private String currentLaneId = null;
 
     private String bpmnID = null;
     private StringBuilder characterStream = null;
@@ -131,6 +133,9 @@ public class BPMNModelHandler extends DefaultHandler {
 
     private List<String> ignoreItemList = null;
 
+    private Map<String, List<String>> laneCache = null;
+    private Map<String, String> laneNames = null;
+
     public BPMNModelHandler() {
         super();
         model = new BPMNModel();
@@ -143,6 +148,8 @@ public class BPMNModelHandler extends DefaultHandler {
         signalCache = new HashMap<String, String>();
         conditionCache = new HashMap<String, String>();
         conditionDefaultFlows = new HashMap<String, String>();
+        laneCache = new HashMap<>();
+        laneNames = new HashMap<>();
 
         linkThrowEventCache = new HashMap<String, String>();
         linkCatchEventCache = new HashMap<String, String>();
@@ -189,6 +196,19 @@ public class BPMNModelHandler extends DefaultHandler {
                 logger.warning("No process name defined!");
                 currentWorkflowGroup = "Default";
             }
+        }
+
+        // bpmn2:lane
+        if (qName.equalsIgnoreCase("bpmn2:lane")) {
+            currentLaneId = attributes.getValue("id");
+            laneCache.put(currentLaneId, new ArrayList<String>());
+            laneNames.put(currentLaneId, attributes.getValue("name"));
+        }
+
+        // bpmn2:flowNodeRef
+        if (qName.equalsIgnoreCase("bpmn2:flowNodeRef")) {
+            isFlowNodeRef = true;
+            characterStream = new StringBuilder();
         }
 
         // bpmn2:startEvent
@@ -388,6 +408,18 @@ public class BPMNModelHandler extends DefaultHandler {
             }
         }
 
+        // bpmn2:lane
+        if (qName.equalsIgnoreCase("bpmn2:lane")) {
+            currentLaneId = null;
+        }
+
+        // bpmn2:flowNodeRef
+        if (qName.equalsIgnoreCase("bpmn2:flowNodeRef")) {
+            isFlowNodeRef = false;
+            laneCache.get(currentLaneId).add(characterStream.toString());
+            characterStream = null;
+        }
+
         // end of bpmn2:task -
         if (bImixsTask && qName.equalsIgnoreCase("bpmn2:task")) {
             bImixsTask = false;
@@ -564,6 +596,12 @@ public class BPMNModelHandler extends DefaultHandler {
             characterStream = characterStream.append(new String(ch, start, length));
         }
 
+        /*
+         * parse a bpmn2:flowNodeRef
+         * */
+        if (isFlowNodeRef) {
+            characterStream = characterStream.append(new String(ch, start, length));
+        }
     }
 
     /**
@@ -695,6 +733,17 @@ public class BPMNModelHandler extends DefaultHandler {
             }
         }
 
+        // Iterate over Lanes
+        for (String laneId : laneCache.keySet()) {
+            String laneName = laneNames.get(laneId);
+            List<String> taskIds = laneCache.get(laneId);
+            for(String taskId : taskIds) {
+                ItemCollection task = taskCache.get(taskId);
+                if (task != null) {
+                    model.addTaskToLane(laneName, task);
+                }
+            }
+        }
         return model;
 
     }

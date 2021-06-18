@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -107,6 +108,7 @@ public class BPMNModel implements Model {
     public final static String EVENT_ITEM_TIMER_DELAY_BASE = "timer.delay_base";
     public final static String EVENT_ITEM_TIMER_DELAY_BASE_PROPERTY = "timer.delay_base_property";
 
+    private Map<String, List<ItemCollection>> laneList = null;
     private Map<Integer, ItemCollection> taskList = null;
     private Map<Integer, List<ItemCollection>> eventList = null;
     private List<String> workflowGroups = null;
@@ -115,6 +117,7 @@ public class BPMNModel implements Model {
     private static Logger logger = Logger.getLogger(BPMNModel.class.getName());
 
     public BPMNModel() {
+        laneList = new TreeMap<String, List<ItemCollection>>();
         taskList = new TreeMap<Integer, ItemCollection>();
         eventList = new TreeMap<Integer, List<ItemCollection>>();
         workflowGroups = new ArrayList<String>();
@@ -439,4 +442,26 @@ public class BPMNModel implements Model {
         eventList.put(pID, activities);
     }
 
+    protected void addTaskToLane(String laneName, ItemCollection task) {
+        if (laneList.get(laneName) == null) {
+            laneList.put(laneName, new ArrayList<>());
+        }
+        laneList.get(laneName).add(task);
+    }
+
+    @Override
+    public String getLane(int taskId) throws ModelException {
+        ItemCollection task = taskList.get(taskId);
+        if (task == null) {
+            return null;
+        }
+        for (Map.Entry<String, List<ItemCollection>> entry : laneList.entrySet()) {
+            for (ItemCollection item : entry.getValue()) {
+                if (Objects.equals(task, item)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return null;
+    }
 }
