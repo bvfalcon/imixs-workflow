@@ -11,6 +11,8 @@
 	<cc:attribute name="workflowController"></cc:attribute>
 	<cc:attribute name="disabletooltip" default="false"
 		type="java.lang.Boolean"></cc:attribute>
+	<cc:attribute name="successAction"
+		type="java.lang.String"></cc:attribute>
 </cc:interface>
 
 <cc:implementation>
@@ -18,7 +20,7 @@
 	
 	<ui:repeat value="#{cc.attrs.workflowController.events}"
 		var="event">
-		<h:commandButton action="#{cc.attrs.workflowController.process}"
+		<h:commandButton action="#{cc.attrs.workflowController.process(cc.attrs.successAction)}"
 			class="imixs-workflow-action" title=""
 			value="#{event.item['txtname']}">
 			<f:setPropertyActionListener
