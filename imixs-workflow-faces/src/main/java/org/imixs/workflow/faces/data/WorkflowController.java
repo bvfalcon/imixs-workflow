@@ -395,6 +395,11 @@ public class WorkflowController extends AbstractDataController implements Serial
         return actionResult;
     }
 
+    public String process(String successAction) throws PluginException, ModelException {
+        process();
+        return successAction;
+    }
+
     /**
      * This method processes the current workItem with the provided eventID. The
      * method can be used as an action or actionListener.
