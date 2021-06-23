@@ -26,6 +26,7 @@
 			<f:setPropertyActionListener
 				target="#{cc.attrs.workflowController.workitem.item['$eventid']}"
 				value="#{event.item['numactivityid']}" />
+			<f:attribute name="immediate" value="#{event.item['numnextprocessid'] == event.item['numprocessid']}" />
 			<h:panelGroup rendered="#{!cc.attrs.disabletooltip}"
 				class="imixs-tooltip">
 				<h:outputText value="#{event.item['rtfdescription']}"
