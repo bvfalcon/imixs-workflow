@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.imixs.workflow.exceptions.InvalidAccessException;
+import org.imixs.workflow.exceptions.ModelException;
 
 /**
  * Static mokup model
@@ -143,6 +144,24 @@ public class MokModel implements Model {
 		return null;
 	}
 
-	
+	@Override
+	public String getLane(int taskId) throws ModelException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public List<String> getLanes()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ItemCollection> findAllTasksByLane(String lane)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
