@@ -464,4 +464,14 @@ public class BPMNModel implements Model {
         }
         return null;
     }
+
+    @Override
+    public List<String> getLanes() {
+        return new ArrayList<>(laneList.keySet());
+    }
+
+    @Override
+    public List<ItemCollection> findAllTasksByLane(String lane) {
+        return laneList.get(lane);
+    }
 }
