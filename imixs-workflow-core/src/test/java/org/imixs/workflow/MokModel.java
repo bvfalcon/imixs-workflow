@@ -150,4 +150,18 @@ public class MokModel implements Model {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<String> getLanes()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ItemCollection> findAllTasksByLane(String lane)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
