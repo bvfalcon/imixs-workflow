@@ -374,11 +374,7 @@ public class DocumentService {
         // did the document exist?
         if (persistedDocument == null) {
             // entity not found in database, create a new instance using the
-            // provided id. Test if user is allowed to create Entities....
-            if (!(ctx.isCallerInRole(ACCESSLEVEL_MANAGERACCESS) || ctx.isCallerInRole(ACCESSLEVEL_EDITORACCESS)
-                    || ctx.isCallerInRole(ACCESSLEVEL_AUTHORACCESS))) {
-                throw new AccessDeniedException(OPERATION_NOTALLOWED, "You are not allowed to perform this operation");
-            }
+            // provided id.
             // create new one with the provided id
             persistedDocument = new Document(sID);
             // if $Created is provided than overtake this information
@@ -396,12 +392,6 @@ public class DocumentService {
             manager.persist(persistedDocument);
 
         } else {
-            // activeEntity exists - verify if current user has write- and
-            // readaccess
-            if (!isCallerAuthor(persistedDocument) || !isCallerReader(persistedDocument)) {
-                throw new AccessDeniedException(OPERATION_NOTALLOWED, "You are not allowed to perform this operation");
-            }
-
             // test if persistedDocument is IMMUTABLE
             if (ItemCollection.createByReference(persistedDocument.getData()).getItemValueBoolean(IMMUTABLE)) {
                 throw new AccessDeniedException(OPERATION_NOTALLOWED, "Operation not allowed, document is immutable!");

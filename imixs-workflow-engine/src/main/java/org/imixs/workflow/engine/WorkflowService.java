@@ -550,11 +550,6 @@ public class WorkflowService implements WorkflowManager, WorkflowContext {
             ItemCollection currentInstance = this.getWorkItem(workitem.getUniqueID());
             // Instance successful loaded ?
             if (currentInstance != null) {
-                // test for author access
-                if (!currentInstance.getItemValueBoolean(DocumentService.ISAUTHOR)) {
-                    throw new AccessDeniedException(AccessDeniedException.OPERATION_NOTALLOWED, "$uniqueid: "
-                            + workitem.getItemValueInteger(WorkflowKernel.UNIQUEID) + " - No Author Access!");
-                }
                 // test if $taskID matches current instance
                 if (workitem.getTaskID() > 0 && currentInstance.getTaskID() != workitem.getTaskID()) {
                     throw new ProcessingErrorException(WorkflowService.class.getSimpleName(),
