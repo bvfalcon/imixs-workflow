@@ -36,24 +36,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RunAs;
-import javax.ejb.LocalBean;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RunAs;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.engine.DocumentService;
 import org.imixs.workflow.exceptions.AccessDeniedException;
 import org.imixs.workflow.exceptions.InvalidAccessException;
 import org.imixs.workflow.exceptions.QueryException;
+
+import jakarta.ejb.ScheduleExpression;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.Timeout;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerConfig;
 
 /**
  * The SchedulerService EJB can be used to start, monitor and stop custom
@@ -93,10 +95,9 @@ import org.imixs.workflow.exceptions.QueryException;
  * @author rsoika
  * @version 1.0
  */
-@Stateless
-@LocalBean
 @DeclareRoles({ "org.imixs.ACCESSLEVEL.MANAGERACCESS" })
 @RunAs("org.imixs.ACCESSLEVEL.MANAGERACCESS")
+@Stateless
 public class SchedulerService {
 
     public static final String DOCUMENT_TYPE = "scheduler";
@@ -108,7 +109,7 @@ public class SchedulerService {
     DocumentService documentService;
 
     @Resource
-    javax.ejb.TimerService timerService;
+    jakarta.ejb.TimerService timerService;
 
     @Inject
     SchedulerConfigurationService schedulerSaveService;
@@ -309,9 +310,11 @@ public class SchedulerService {
      */
     public void startAllSchedulers() {
         logger.info("...starting Imixs Schedulers....");
-        try {
-            String sQuery = "(type:\"" + SchedulerService.DOCUMENT_TYPE + "\" )";
-            Collection<ItemCollection> col = documentService.find(sQuery, 101, 0);
+        //try {
+            //String sQuery = "(type:\"" + SchedulerService.DOCUMENT_TYPE + "\" )";
+            //Collection<ItemCollection> col = documentService.find(sQuery, 101, 0);
+            // issue #748
+            Collection<ItemCollection> col = documentService.getDocumentsByType(SchedulerService.DOCUMENT_TYPE);
             if (col.size() > 100) {
                 // Issue #568 - we do not support more than 100 jobs in parallel!
                 logger.severe(
@@ -337,9 +340,9 @@ public class SchedulerService {
                     logger.info("...Scheduler Service " + schedulerConfig.getUniqueID() + " is not enabled. ");
                 }
             }
-        } catch (QueryException e1) {
-            e1.printStackTrace();
-        }
+        //} catch (QueryException e1) {
+        //    e1.printStackTrace();
+        //}
     }
 
     /**
@@ -352,7 +355,7 @@ public class SchedulerService {
      */
     public Timer findTimer(String id) {
         for (Object obj : timerService.getTimers()) {
-            Timer timer = (javax.ejb.Timer) obj;
+            Timer timer = (jakarta.ejb.Timer) obj;
             if (id.equals(timer.getInfo())) {
                 return timer;
             }
@@ -471,7 +474,7 @@ public class SchedulerService {
      * @throws QueryException
      */
     @Timeout
-    protected void onTimeout(javax.ejb.Timer timer) {
+    protected void onTimeout(jakarta.ejb.Timer timer) {
         String errorMes = "";
         // start time....
         long lProfiler = System.currentTimeMillis();

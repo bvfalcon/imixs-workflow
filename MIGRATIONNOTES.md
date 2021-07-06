@@ -1,5 +1,25 @@
 This document contains migration notes from older version of Imixs-Workflow. 
 
+# Migration 5.2 -> 6.x
+
+## Jakarta EE9
+
+Imixs-Workflow version 6.x is based on Jakarta EE9. For that reason the engine need to be deployed on Jakarta EE9 compatible application server.
+
+## RuleEngine based on GraalVM
+
+Since version 6.0 the deprecated JavaScript Nashorn engine was replaced with the GraalVM 20.2. 
+The Imixs-Workflow engine contains a migration handler which automatically detects and adapts deprecated script syntax. Deprecated scripts will be logged into the server log as warnings. So on the first step no migration should be necessary. 
+
+**Note:** Ensure that your scripts do not contain any deprecated syntax used **before** Version 5.0 of the Imixs-Workflow engine. If so the workflow engine will usually log the following warning:
+
+	Script is deprecated - use JSON object 'result'
+	
+In this case make sure that you migrate your scripts first to the syntax introduced with version 5.0!
+       
+
+
+
 # Migration 5.1 -> 5.2
 
 Since version 5.2.x the EventLog JPA entity was extended with a new column 'timeout'. For that the table schema need to be updated.

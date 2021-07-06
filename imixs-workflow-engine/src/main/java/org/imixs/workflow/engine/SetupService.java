@@ -41,18 +41,12 @@ import java.util.Optional;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RunAs;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.Timer;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RunAs;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -71,6 +65,13 @@ import org.imixs.workflow.xml.XMLDataCollection;
 import org.imixs.workflow.xml.XMLDocument;
 import org.imixs.workflow.xml.XMLDocumentAdapter;
 import org.xml.sax.SAXException;
+
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.ejb.Timer;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 /**
  * The SetupService EJB initializes the Imxis-Workflow engine and returns the
@@ -130,7 +131,7 @@ public class SetupService {
     private SchedulerService schedulerService;
 
     @Resource
-    private javax.ejb.TimerService timerService;
+    private jakarta.ejb.TimerService timerService;
 
     @Inject
     protected Event<SetupEvent> setupEvents;
@@ -147,7 +148,7 @@ public class SetupService {
         logger.info("   ____      _");
         logger.info("  /  _/_ _  (_)_ __ ___   Workflow");
         logger.info(" _/ //  ' \\/ /\\ \\ /(_-<   Engine");
-        logger.info("/___/_/_/_/_//_\\_\\/___/   V5.2");
+        logger.info("/___/_/_/_/_//_\\_\\/___/   V6.0");
         logger.info("");
 
         logger.info("...initalizing models...");
@@ -394,7 +395,7 @@ public class SetupService {
     }
 
     /**
-     * This method migrates the deprecated WorkflowScheduelr configuraiton into the
+     * This method migrates the deprecated WorkflowScheduelr configuration into the
      * new Imixs Scheduler API
      */
     public void migrateWorkflowScheduler() {

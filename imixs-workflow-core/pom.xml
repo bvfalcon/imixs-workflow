@@ -2,7 +2,7 @@
 	<parent>
 		<artifactId>imixs-workflow</artifactId>
 		<groupId>org.imixs.workflow</groupId>
-		<version>5.2.11-SNAPSHOT</version>
+		<version>6.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>imixs-workflow-core</artifactId>
@@ -16,5 +16,15 @@ Imixs-Workflow Core provides various components in a Java framework that allow t
 	</build>
 
 	<dependencies>
+	    <dependency>
+	      <groupId>org.graalvm.js</groupId>
+	      <artifactId>js</artifactId>
+	      <version>20.2.0</version>
+	    </dependency>  
+	    <dependency>
+	      <groupId>org.graalvm.js</groupId>
+	      <artifactId>js-scriptengine</artifactId>
+	      <version>20.2.0</version>
+	    </dependency>	
 	</dependencies>
 </project>
