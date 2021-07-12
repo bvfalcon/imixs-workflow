@@ -33,7 +33,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -73,6 +72,7 @@ import org.imixs.workflow.engine.adminp.AdminPService;
 import org.imixs.workflow.engine.index.IndexEvent;
 import org.imixs.workflow.engine.index.SchemaService;
 import org.imixs.workflow.engine.jpa.EventLog;
+import org.imixs.workflow.engine.lucene.util.ObjectToString;
 import org.imixs.workflow.exceptions.IndexException;
 
 /**
@@ -93,8 +93,6 @@ public class LuceneIndexService {
 
     @PersistenceContext(unitName = "org.imixs.workflow.jpa")
     private EntityManager manager;
-
-    private SimpleDateFormat luceneDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
     @Inject
     @ConfigProperty(name = "lucence.indexDir", defaultValue = DEFAULT_INDEX_DIRECTORY)
@@ -392,18 +390,7 @@ public class LuceneIndexService {
                     // skip null values
                     continue;
 
-                if (o instanceof Calendar || o instanceof Date) {
-                    // convert calendar to string
-                    String sDateValue;
-                    if (o instanceof Calendar)
-                        sDateValue = luceneDateFormat.format(((Calendar) o).getTime());
-                    else
-                        sDateValue = luceneDateFormat.format((Date) o);
-                    sValue += sDateValue + ",";
-
-                } else
-                    // simple string representation
-                    sValue += o.toString() + ",";
+                sValue += ObjectToString.convert(o) + ",";
             }
             if (sValue != null) {
                 textContent += sValue + ",";

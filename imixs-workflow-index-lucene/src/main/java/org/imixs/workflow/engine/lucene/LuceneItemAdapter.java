@@ -28,11 +28,17 @@
 
 package org.imixs.workflow.engine.lucene;
 
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.inject.Named;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StringField;
@@ -40,6 +46,7 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.util.BytesRef;
 import org.imixs.workflow.engine.index.UpdateService;
+import org.imixs.workflow.engine.lucene.util.ObjectToString;
 
 /**
  * The LuceneItemAdapter is a CDI bean, providing methods to convert the value
@@ -131,23 +138,6 @@ public class LuceneItemAdapter {
      * @return string value
      */
     public String convertItemValue(Object itemValue) {
-        String convertedValue = "";
-
-        if (itemValue instanceof Calendar || itemValue instanceof Date) {
-            SimpleDateFormat dateformat = new SimpleDateFormat("yyyyMMddHHmmss");
-
-            // convert calendar to lucene string representation
-            String sDateValue;
-            if (itemValue instanceof Calendar) {
-                sDateValue = dateformat.format(((Calendar) itemValue).getTime());
-            } else {
-                sDateValue = dateformat.format((Date) itemValue);
-            }
-            convertedValue = sDateValue;
-        } else {
-            // default
-            convertedValue = itemValue.toString();
-        }
-        return convertedValue;
+        return ObjectToString.convert(itemValue);
     }
 }
